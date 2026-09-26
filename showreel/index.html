@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PORTOKO Showreel</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: auto; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="scene.js"></script>
+<script>
+  // Live preview when opened directly in a browser (?t=5.2 freezes on a frame).
+  const q = new URLSearchParams(location.search);
+  if (!q.has('capture')) {
+    READY.then(() => {
+      if (q.has('t')) { render(parseFloat(q.get('t'))); return; }
+      const t0 = performance.now();
+      (function loop() {
+        render(((performance.now() - t0) / 1000) % DUR);
+        requestAnimationFrame(loop);
+      })();
+    });
+  }
+</script>
+</body>
+</html>
