@@ -5,6 +5,7 @@
 | `PORTOKO_showreel.mp4` | 20 s brand film, 1080p60, bold motion graphics |
 | `PORTOKO_teaser.mp4` | 30 s teaser, 1080p24: calm, painted real footage (see below) |
 | `PORTOKO_film.mp4` | 20 s cinematic film, 1080p24: a match-cut montage of 39 real photographs on one circle, three words, then the O becomes the logo |
+| `PORTOKO_intro.mp4` | 35 s intro teaser, 1080p24: through a lens, out onto one horizon of 24 surfaces, three phrases, then the wordmark |
 
 `PORTOKO_showreel.mp4` — 20 s, 1920×1080, 60 fps. The orchestral score is made only from real CC0 recordings.
 
@@ -67,3 +68,23 @@ python3 render_film.py                   # frames/*.jpg
 python3 score.py score.wav               # needs the CC0 samples, see showreel/audio/fetch_samples.sh
 ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -b:v 10M -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_film.mp4
 ```
+
+## Intro (`intro/`)
+A 35 s teaser in two movements, joined by one camera move. First we look through a lens at eight archive images, from tangled to ordered. Then the camera pushes through the lens, and its rim opens out into a horizon. On that horizon, 24 real surfaces are wrapped onto the same planet-sized dome, and the cuts speed up. All 32 images are public domain or CC0 (`intro/CREDITS.md`).
+
+| Time | Picture | Words | Sound |
+|---|---|---|---|
+| 0–11 s | Lens: marbled paper, knotted cable, a ledger, a loom, a pocket watch, a wind rose, radiolaria, a neat rope coil. Each image dissolves into the next and pushes in slowly | — | Wine-glass drone, one soft piano note per image, harp answers |
+| 11–13 s | The aperture grows and sinks until its rim is the horizon; the rope becomes a moon | — | Bowed cymbal, timpani and string swell |
+| 13–27 s | Horizon match-cuts, 1.1 s down to 0.25 s: moon, maps, lace, leaf, marbling, lichen, ledgers, kilims, tree rings, star charts, dunes | *Untangle* · *how things* · *really work.* | Wide F chord, then one note of the hook per cut over building strings; hard stop |
+| 27–35 s | Dark card, an atmosphere glow along the limb in the site colours | *A digital atelier*, then the wordmark and portoko.com | Glass note; C add9 chord, tubular bell, the switch click; strings as the limb rises |
+
+Rebuild:
+```
+cd intro
+python3 tools/commons.py fetch $(python3 -c "import json;d=json.load(open('shots.json'));print(' '.join(x['id'] for a in d.values() for x in a))")
+python3 render_intro.py                  # frames/*.jpg  (python3 render_intro.py 12.5 20 = stills)
+python3 score.py score.wav               # needs the CC0 samples, see showreel/audio/fetch_samples.sh
+ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -b:v 10M -maxrate 14M -bufsize 20M -tune grain -preset slow -pix_fmt yuv420p -c:a aac -b:a 256k -shortest -movflags +faststart ../PORTOKO_intro.mp4
+```
+To pick different images: `tools/commons.py search "..."`, then `tools/previews.py` and `tools/sheets.py` for contact sheets, then edit `shots.json` (per-shot `zoom`, `dx`, `dy`, and an optional flat `bg` colour behind the dome), and run `tools/credits.py`.

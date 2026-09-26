@@ -18,7 +18,8 @@ sparse https://github.com/sgossner/VSCO-2-CE vsco \
   '/Miscellania Raw/Misc 2/glock_glisses/*' '/VSCO 1 Percussion/varWood/wood_click*'
 sparse https://github.com/sgossner/VCSL vcsl \
   '/Idiophones/Friction Idiophones/Wine Glasses/*' '/Idiophones/Struck Idiophones/Hand Chimes/*' \
-  '/Idiophones/Struck Idiophones/Claps/*' '/Idiophones/Struck Idiophones/Tubular Bells 1/*'
+  '/Idiophones/Struck Idiophones/Claps/*' '/Idiophones/Struck Idiophones/Tubular Bells 1/*' \
+  '/Chordophones/Zithers/Grand Piano, Steinway B/*'
 sparse https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds cc0sfx \
   '/100-CC0-wood-metal-SFX/keys_*' '/kenney_uiaudio/*' '/kenney_casinoaudio/*' '/kenney_impactsounds/*' \
   '/kenney_interfacesounds/*' '/100-cc0-sfx-2/sfx100v2_stones_*' '/bb - Keyboard Sounds (Mar 2021)/*' \
