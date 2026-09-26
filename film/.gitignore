@@ -1,0 +1,10 @@
+frames/
+stills/
+images/
+cache/
+*.log
+nohup.out
+draft*.mp4
+score.wav
+review_*.jpg
+__pycache__/

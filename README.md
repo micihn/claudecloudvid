@@ -4,6 +4,7 @@
 |---|---|
 | `PORTOKO_showreel.mp4` | 20 s brand film, 1080p60, bold motion graphics |
 | `PORTOKO_teaser.mp4` | 30 s teaser, 1080p24: calm, painted real footage (see below) |
+| `PORTOKO_film.mp4` | 20 s cinematic film, 1080p24: a match-cut montage of 39 real photographs on one circle, three words, then the O becomes the logo |
 
 `PORTOKO_showreel.mp4` — 20 s, 1920×1080, 60 fps. The orchestral score is made only from real CC0 recordings.
 
@@ -50,4 +51,19 @@ node tools/logo_mask.mjs assets/logo_mask.png                                   
 python3 render_teaser.py                                                          # frames/*.jpg (numpy, opencv, pillow)
 (cd ../showreel/audio && python3 teaser_score.py ../../teaser/score.wav)
 ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -crf 16 -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_teaser.mp4
+```
+
+## Film (`film/`)
+The film is a match-cut montage. 39 public-domain and CC0 photographs, all of round things (the sun, Earth, a 1635 engraving of the moon, tree rings, citrus, pocket watches, rope, charts, a radiolarian, embroidery), are aligned so their circle sits in exactly the same place. The circle turns slowly across the cuts. The cuts speed up from 1.3 s to 0.17 s, and each one is a note of the brand hook on piano and harp, over strings that build.
+
+Only three words appear: *Untangle* (over a knotted rope, then a neat coil), *how things*, *work.* The picture and music cut hard at 16 s. The circle comes back as a thin ring of light around "A digital atelier", then slides into the middle O of PORTOKO, and the wordmark grows out from it.
+
+Rebuild:
+```
+cd film
+python3 tools/fetch_patient.py $(python3 -c "import json;print(' '.join(s['id'] for s in json.load(open('shots.json'))))")   # needs candidates.jsonl
+python3 tools/find_circles.py            # circles.json (committed)
+python3 render_film.py                   # frames/*.jpg
+python3 score.py score.wav               # needs the CC0 samples, see showreel/audio/fetch_samples.sh
+ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -b:v 10M -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_film.mp4
 ```
