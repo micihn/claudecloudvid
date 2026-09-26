@@ -4,12 +4,12 @@
  * rendered in any order (the capture script renders in parallel).
  *
  *  0.0 – 2.0   01 IGNITION     dot matrix, beat ripples, implosion
- *  2.0 – 5.0   02 BIG BANG     burst, shockwaves, MOTION -> EMOTION, zoom through the O
+ *  2.0 – 5.0   02 UNTANGLE     burst, shockwaves, TANGLED -> UNTANGLED, zoom through the D
  *  5.0 – 8.0   03 KINETIC TYPE word-per-beat typography in a tunnel, O-portal out
  *  8.0 – 11.5  04 ORBIT        accretion disk / black hole (reference image)
  * 11.5 – 14.0  05 FLOW         curl-noise ink that condenses into the wordmark
  * 14.0 – 17.5  06 IDENTITY     logo hit, orbiting O's, light sweeps
- * 17.5 – 20.0  07 END CARD     brand colours on white
+ * 17.5 – 20.0  07 END CARD     portoko.com look + the call to action
  */
 
 const W = 1920, H = 1080, FPS = 60, DUR = 20;
@@ -80,13 +80,13 @@ function noise3(x, y, z) {
 
 // ---------------------------------------------------------------- palette
 const COL = {
-  white: [236, 246, 255], mint: [125, 255, 196], lime: [25, 240, 138], green: [10, 168, 90],
-  teal: [25, 211, 197], blue: [47, 123, 255], violet: [139, 92, 255], hot: [255, 250, 215],
+  white: [230, 251, 255], mint: [111, 232, 176], lime: [1, 218, 125], green: [0, 150, 90],
+  teal: [94, 224, 232], blue: [31, 181, 201], violet: [198, 232, 74], hot: [243, 242, 238],
 };
 const PAL = [COL.lime, COL.mint, COL.teal, COL.blue, COL.violet, COL.green, COL.white, COL.lime, COL.teal];
 const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
 const mixc = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
-const DISK_STOPS = [[0, COL.hot], [0.1, [200, 255, 175]], [0.28, COL.lime], [0.48, COL.teal], [0.7, COL.blue], [1, COL.violet]];
+const DISK_STOPS = [[0, COL.hot], [0.1, [198, 244, 220]], [0.28, COL.lime], [0.48, COL.teal], [0.7, COL.blue], [1, COL.violet]];
 function ramp(stops, f) {
   f = clamp(f);
   for (let i = 1; i < stops.length; i++) {
@@ -128,7 +128,7 @@ function scramble(str, p, t, seed = 0) {
 }
 
 // ---------------------------------------------------------------- assets
-let NEBULA, GRAIN = [], LOGO_IMG, STARS = [];
+let NEBULA, GRAIN = [], STARS = [];
 
 function buildNebula() {
   const c = mk(2400, 1400), g = c.getContext('2d'), r = rng(2026);
@@ -221,8 +221,6 @@ const LOGO = (() => {
   }
   return { paths, samples, O: [427.5, 1247.5, 1828.5], cx: 1000, cy: 204, SW: 43 };
 })();
-// PNG letter columns (image px) for the end card
-const LOGO_COLS = [[44, 242], [300, 555], [620, 818], [862, 1075], [1120, 1375], [1439, 1637], [1701, 1956]];
 
 function logoXform(t) {
   const s = 0.78 * (1 + 0.045 * E.inOutCubic(prog(t, 14, 17.4)));
@@ -235,7 +233,7 @@ function logoGradient(g, mode) {
   if (mode === 'brand') {
     gr.addColorStop(0, '#191b25'); gr.addColorStop(0.45, '#114435'); gr.addColorStop(0.75, '#0b7646'); gr.addColorStop(1, '#05a858');
   } else {
-    gr.addColorStop(0, '#f2f8ff'); gr.addColorStop(0.35, '#c9fbe6'); gr.addColorStop(0.7, '#3cf0a0'); gr.addColorStop(1, '#0fcf74');
+    gr.addColorStop(0, '#f3f2ee'); gr.addColorStop(0.4, '#c6f4dc'); gr.addColorStop(0.65, '#6fe8b0'); gr.addColorStop(1, '#01da7d');
   }
   return gr;
 }
@@ -400,9 +398,9 @@ function S1(g, t) {
     setFont(g, 'Space Grotesk', 300, 46); g.letterSpacing = '38px';
     g.fillStyle = rgba(COL.white, 0.95 * ta);
     g.fillText(scramble('PORTOKO', prog(t, 0.3, 1.0), t, 1), cx + 19, cy - 120);
-    setFont(g, 'JetBrains Mono', 400, 17); g.letterSpacing = '9px';
+    setFont(g, 'IBM Plex Mono', 400, 17); g.letterSpacing = '9px';
     g.fillStyle = rgba(COL.mint, 0.75 * ta);
-    g.fillText(scramble('A MOTION DESIGN SHOWREEL', prog(t, 0.55, 1.2), t, 2), cx + 4, cy + 118);
+    g.fillText(scramble('A DIGITAL ATELIER', prog(t, 0.55, 1.2), t, 2), cx + 4, cy + 118);
     g.letterSpacing = '0px';
   }
   // collapse flash
@@ -415,19 +413,19 @@ function S1(g, t) {
   }
 }
 
-// ---------------------------------------------------------------- section 02: big bang + MOTION -> EMOTION
+// ---------------------------------------------------------------- section 02: big bang + TANGLED -> UNTANGLED
 function S2(g, t) {
   const tau = t - 2.0, cx = W / 2, cy = H / 2;
   if (tau < 0) return;
   // zoom through the "O" at the end
   const zp = E.inExpo(prog(t, 4.45, 5.0));
-  const word = { size: 230 };
+  const word = { size: 172 };
   setFont(g, 'Unbounded', 800, word.size); g.letterSpacing = '0px';
-  const Lm = layout(g, 'MOTION', 0), eW = g.measureText('E').width;
+  const Lm = layout(g, 'TANGLED', 0), eW = g.measureText('UN').width;
   const eIn = E.outExpo(prog(t, 4.0, 4.28));
   const mLeft = cx - Lm.width / 2 + (eW / 2) * eIn;
-  const oChar = Lm.chars[1];
-  const ox = mLeft + oChar.x + oChar.w / 2, oy = cy + 4;
+  const oChar = Lm.chars[Lm.chars.length - 1]; // zoom through the counter of the D
+  const ox = mLeft + oChar.x + oChar.w * 0.52, oy = cy - 2;
   const Z = Math.exp(zp * Math.log(46));
 
   g.save();
@@ -528,19 +526,19 @@ function S2(g, t) {
       const ex = lerp(-eW - 200, mLeft - eW, pe);
       const smear = (1 - pe);
       g.fillStyle = rgba(COL.lime, 1);
-      if (smear > 0.02) for (let k = 1; k <= 5; k++) { g.globalAlpha = 0.12; g.fillText('E', ex - k * 60 * smear, base); }
+      if (smear > 0.02) for (let k = 1; k <= 5; k++) { g.globalAlpha = 0.12; g.fillText('UN', ex - k * 60 * smear, base); }
       g.globalAlpha = 1;
-      g.fillText('E', ex, base);
+      g.fillText('UN', ex, base);
       const hit = imp(t, 4.0, 0.1);
-      if (hit > 0.01) { g.globalCompositeOperation = 'lighter'; g.fillStyle = rgba(COL.white, hit); g.fillText('E', ex, base); g.globalCompositeOperation = 'source-over'; }
+      if (hit > 0.01) { g.globalCompositeOperation = 'lighter'; g.fillStyle = rgba(COL.white, hit); g.fillText('UN', ex, base); g.globalCompositeOperation = 'source-over'; }
     }
     // underline sweep + caption
     const ul = E.outExpo(prog(t, 3.1, 3.8)) * (1 - zp);
     if (ul > 0) {
       const totalW = Lm.width + eW * eIn, left = cx - totalW / 2;
       g.fillStyle = rgba(COL.lime, 0.9); g.fillRect(left, bot + 28, totalW * ul, 3);
-      setFont(g, 'JetBrains Mono', 400, 16); g.letterSpacing = '6px'; g.fillStyle = rgba(COL.white, 0.6 * ul);
-      g.fillText(t < 4.0 ? scramble('FIG.01 — MOVEMENT', prog(t, 3.2, 3.7), t, 3) : scramble('FIG.02 — FEELING', prog(t, 4.02, 4.4), t, 4), left, bot + 70);
+      setFont(g, 'IBM Plex Mono', 400, 16); g.letterSpacing = '6px'; g.fillStyle = rgba(COL.white, 0.6 * ul);
+      g.fillText(t < 4.0 ? scramble('5 SPREADSHEETS · 2 WHATSAPP GROUPS', prog(t, 3.2, 3.8), t, 3) : scramble("WE UNTANGLE HOW THINGS WORK", prog(t, 4.02, 4.5), t, 4), left, bot + 70);
       g.letterSpacing = '0px';
     }
   }
@@ -558,10 +556,21 @@ function anamorphic(g, x, y, a, c) {
 }
 
 // ---------------------------------------------------------------- section 03: kinetic type
+// the four verbs from portoko.com, then the thing they're all done in
 const WORDS = [
-  [5.0, 'TIMING', 'spring'], [5.5, 'RHYTHM', 'slice'], [6.0, 'PHYSICS', 'bounce'], [6.5, 'LIGHT', 'light'],
-  [7.0, 'FORM', 'extrude'], [7.25, 'FLOW', 'wave'], [7.5, 'SCOPE', 'track'],
+  [5.0, 'CONFIGURE', 'spring', 'what the system already does'], [5.5, 'BUILD', 'slice', 'what you genuinely need'],
+  [6.0, 'CONNECT', 'bounce', "the parts that don't talk"], [6.5, 'REDESIGN', 'light', "the flow, if it's the flow"],
+  [7.0, 'PROCESS', 'extrude', 'mapped on the floor first'], [7.25, 'FLOW', 'wave', 'fixed before code'],
+  [7.5, 'ODOO', 'track', 'community edition only'],
 ];
+// where the final O of ODOO sits at time t (the portal grows out of it)
+function portalAt(t) {
+  const g = tg; setFont(g, 'Unbounded', 800, 100); g.letterSpacing = '0px';
+  const size = Math.min(190, Math.floor((1480 / g.measureText('ODOO').width) * 100));
+  setFont(g, 'Unbounded', 800, size);
+  const L = layout(g, 'ODOO', E.outExpo(prog(t - 7.5, 0, 0.35)) * 60), lc = L.chars[L.chars.length - 1];
+  return { x: W / 2 - L.width / 2 + lc.x + lc.w / 2, y: H / 2, r: size * 0.37 };
+}
 function tunnel(g, t, alpha, inv) {
   const cx = W / 2, cy = H / 2, F = 700, hw = 1500, hh = 860, sp = 420, depth = 6300, speed = 2600;
   const roll = Math.sin(t * 0.9) * 0.05;
@@ -586,10 +595,10 @@ function S3(g, t) {
   const cx = W / 2, cy = H / 2;
   let wi = -1; for (let i = 0; i < WORDS.length; i++) if (t >= WORDS[i][0]) wi = i;
   if (wi < 0) return;
-  const [t0, word, fx] = WORDS[wi];
+  const [t0, word, fx, sub] = WORDS[wi];
   const lt = t - t0;
   const inv = fx === 'slice';
-  if (inv) { g.fillStyle = '#0aa85a'; g.fillRect(0, 0, W, H); }
+  if (inv) { g.fillStyle = '#01da7d'; g.fillRect(0, 0, W, H); }
   tunnel(g, t, inv ? 0.9 : 0.8 + imp(t, t0, 0.2) * 0.6, inv);
   // background marquee
   g.save();
@@ -601,10 +610,11 @@ function S3(g, t) {
   }
   g.restore();
 
-  const size = { TIMING: 220, RHYTHM: 220, PHYSICS: 210, LIGHT: 250, FORM: 270, FLOW: 270, SCOPE: 170 }[word];
+  setFont(g, 'Unbounded', 800, 100);
+  const size = Math.min(fx === 'track' ? 190 : 270, Math.floor((1480 / g.measureText(word).width) * 100));
   setFont(g, 'Unbounded', 800, size); g.textBaseline = 'alphabetic'; g.textAlign = 'left'; g.letterSpacing = '0px';
   let ls = 0;
-  if (fx === 'track') ls = E.outExpo(prog(lt, 0, 0.35)) * 70;
+  if (fx === 'track') ls = E.outExpo(prog(lt, 0, 0.35)) * 60;
   const L = layout(g, word, ls), left = cx - L.width / 2, base = cy + size * 0.36;
   const fill = inv ? '#03120a' : '#f4fbff';
   g.fillStyle = fill;
@@ -669,15 +679,19 @@ function S3(g, t) {
     L.chars.forEach((c, i) => g.fillText(c.ch, left + c.x, base + Math.sin(lt * 16 - i * 1.1) * 38 * (1 - lt * 2.5) * a + (1 - a) * 80));
   } else if (fx === 'track') {
     const a = E.outCubic(prog(lt, 0, 0.15));
-    g.globalAlpha = a; L.chars.forEach((c, i) => { if (i !== 2 || t < 7.73) g.fillText(c.ch, left + c.x, base); }); g.globalAlpha = 1;
+    const last = L.chars.length - 1;
+    g.globalAlpha = a; L.chars.forEach((c, i) => { if (i !== last || t < 7.73) g.fillText(c.ch, left + c.x, base); }); g.globalAlpha = 1;
   }
   // index tag
-  setFont(g, 'JetBrains Mono', 700, 16); g.letterSpacing = '4px';
+  setFont(g, 'IBM Plex Mono', 600, 16); g.letterSpacing = '4px';
   g.fillStyle = inv ? 'rgba(0,0,0,0.75)' : rgba(COL.lime, 0.9);
   g.fillText(`0${wi + 1}/07`, left, base - size * 0.95);
-  setFont(g, 'JetBrains Mono', 400, 16);
+  setFont(g, 'IBM Plex Mono', 400, 16);
   g.fillStyle = inv ? 'rgba(0,0,0,0.6)' : 'rgba(236,246,255,0.55)';
-  g.textAlign = 'right'; g.fillText(scramble(`${word.toLowerCase()}.fx`, prog(lt, 0, 0.2), t, wi), left + L.width, base - size * 0.95);
+  g.textAlign = 'right'; g.fillText(`${word.toLowerCase()}()`, left + L.width, base - size * 0.95);
+  setFont(g, 'IBM Plex Mono', 500, 24); g.letterSpacing = '2px'; g.textAlign = 'center';
+  g.fillStyle = inv ? 'rgba(0,0,0,0.8)' : rgba(COL.mint, 0.95);
+  g.fillText(scramble(sub, prog(lt, 0.02, 0.16), t, wi + 40), cx, base + 78);
   g.textAlign = 'left'; g.letterSpacing = '0px';
 }
 
@@ -784,9 +798,9 @@ function S4(g, t) {
     g.textAlign = 'left'; g.textBaseline = 'alphabetic';
     setFont(g, 'Space Grotesk', 300, 64); g.letterSpacing = '6px';
     g.fillStyle = rgba(COL.white, 0.92 * ca);
-    g.fillText(scramble('GRAVITY', prog(t, 8.4, 9.0), t, 5), 150, 830);
-    setFont(g, 'JetBrains Mono', 400, 16); g.letterSpacing = '5px'; g.fillStyle = rgba(COL.mint, 0.7 * ca);
-    g.fillText(scramble('EVERY FRAME PULLS YOU IN', prog(t, 8.7, 9.4), t, 6), 154, 872);
+    g.fillText(scramble('HONEST ADVICE', prog(t, 8.4, 9.0), t, 5), 150, 830);
+    setFont(g, 'IBM Plex Mono', 400, 16); g.letterSpacing = '5px'; g.fillStyle = rgba(COL.mint, 0.7 * ca);
+    g.fillText(scramble('IF IT MAKES NO ECONOMIC SENSE, WE TELL YOU', prog(t, 8.7, 9.6), t, 6), 154, 872);
     g.fillStyle = rgba(COL.lime, 0.9 * ca); g.fillRect(154, 760, 60 * E.outExpo(prog(t, 8.4, 9.0)), 3);
     g.letterSpacing = '0px';
   }
@@ -825,9 +839,9 @@ function S5(g, t) {
   if (ca > 0) {
     g.textAlign = 'right'; g.textBaseline = 'alphabetic';
     setFont(g, 'Space Grotesk', 300, 64); g.letterSpacing = '6px'; g.fillStyle = rgba(COL.white, 0.9 * ca);
-    g.fillText(scramble('FLUIDITY', prog(t, 11.8, 12.3), t, 7), W - 150, 250);
-    setFont(g, 'JetBrains Mono', 400, 16); g.letterSpacing = '5px'; g.fillStyle = rgba(COL.mint, 0.7 * ca);
-    g.fillText(scramble('CURL NOISE · 2,600 PARTICLES', prog(t, 12.0, 12.6), t, 8), W - 150, 292);
+    g.fillText(scramble('FIX THE FLOW', prog(t, 11.8, 12.3), t, 7), W - 150, 250);
+    setFont(g, 'IBM Plex Mono', 400, 16); g.letterSpacing = '5px'; g.fillStyle = rgba(COL.mint, 0.7 * ca);
+    g.fillText(scramble('BEFORE WE TOUCH ANY CODE', prog(t, 12.0, 12.6), t, 8), W - 150, 292);
     g.textAlign = 'left'; g.letterSpacing = '0px';
   }
 }
@@ -921,9 +935,9 @@ function S6(g, t) {
     lgr.addColorStop(0, rgba(COL.lime, 0)); lgr.addColorStop(0.5, rgba(COL.lime, 0.9)); lgr.addColorStop(1, rgba(COL.lime, 0));
     g.fillStyle = lgr; g.fillRect(cx - lw / 2, ty - 40, lw, 1.5);
     g.textAlign = 'center'; g.textBaseline = 'middle';
-    setFont(g, 'JetBrains Mono', 400, 22); g.letterSpacing = '12px';
+    setFont(g, 'IBM Plex Mono', 500, 22); g.letterSpacing = '9px';
     g.fillStyle = rgba(COL.white, 0.85 * lp);
-    g.fillText(scramble('MOTION DESIGN · SHOWREEL 2026', prog(t, 14.8, 15.6), t, 9), cx + 6, ty);
+    g.fillText(scramble('A DIGITAL ATELIER · WITH A CONSULTING DESK', prog(t, 14.8, 15.7), t, 9), cx + 6, ty);
     g.letterSpacing = '0px';
   }
   // iris out through the middle O
@@ -935,53 +949,79 @@ function S6(g, t) {
   }
 }
 
-// ---------------------------------------------------------------- section 07: end card
+// ---------------------------------------------------------------- section 07: end card (portoko.com look)
 function S7(g, t) {
-  g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H);
-  const sc = 0.56, iw = 2000 * sc, ih = 440 * sc, ix = W / 2 - iw / 2, iy = H / 2 - ih / 2 - 46;
-  LOGO_COLS.forEach(([a, b], i) => {
-    const p = E.outExpo(prog(t, 17.55 + i * 0.05, 17.55 + i * 0.05 + 0.9));
-    if (p <= 0) return;
-    g.save(); g.beginPath(); g.rect(ix + (a - 3) * sc, iy + 70 * sc, (b - a + 6) * sc, 270 * sc); g.clip();
-    g.drawImage(LOGO_IMG, ix, iy + (1 - p) * 200, iw, ih);
-    g.restore();
-  });
-  // brand-green orbit around the final O
+  // charcoal sky with the site's nebula tints
+  g.fillStyle = '#252424'; g.fillRect(0, 0, W, H);
+  for (const [x, y, r, c, a] of [[0.08, 0.04, 900, [31, 181, 201], 0.3], [0.62, 0.2, 820, [1, 218, 125], 0.16], [0.95, 0.5, 900, [1, 218, 125], 0.12], [0.04, 0.7, 800, [31, 181, 201], 0.14], [0.7, 0.98, 900, [150, 200, 40], 0.06]]) {
+    const gr = g.createRadialGradient(x * W, y * H, 0, x * W, y * H, r);
+    gr.addColorStop(0, rgba(c, a)); gr.addColorStop(1, rgba(c, 0)); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  }
+  drawStars(g, t, 0.35, -6);
+  // wordmark, letter by letter
+  const X = { cx: W / 2, cy: 400, s: 0.6 };
+  g.save(); g.translate(X.cx, X.cy); g.scale(X.s, X.s); g.translate(-LOGO.cx, -LOGO.cy);
+  g.beginPath(); g.rect(-100, 76, 2300, 256); g.clip();
+  g.lineWidth = LOGO.SW; g.lineCap = 'butt'; g.lineJoin = 'miter'; g.miterLimit = 4; g.strokeStyle = logoGradient(g, 'light');
+  for (const pa of LOGO.paths) {
+    const p = E.outExpo(prog(t, 17.55 + pa.li * 0.05, 17.55 + pa.li * 0.05 + 0.9));
+    if (p <= 0) continue;
+    g.save(); g.translate(0, (1 - p) * 300); g.stroke(pa.p); g.restore();
+  }
+  g.restore();
+  // orbit around the last O
   const op = E.outExpo(prog(t, 18.05, 19.0));
   if (op > 0) {
-    const ox = ix + 1828.5 * sc, oy = iy + 204 * sc, R = 128 * sc + 44 * op;
+    const [ox, oy] = L2S(X, LOGO.O[2], LOGO.cy), R = 128 * X.s + 40 * op;
     g.save(); g.translate(ox, oy); g.rotate(-0.35 + (t - 18) * 0.05);
-    g.strokeStyle = `rgba(10,168,90,${0.55 * op})`; g.lineWidth = 2;
+    g.strokeStyle = rgba(COL.lime, 0.6 * op); g.lineWidth = 2;
     g.beginPath(); g.ellipse(0, 0, R * 1.12, R * 0.34, 0, -Math.PI * 0.95 * op - 0.2, 0.2 + Math.PI * 0.95 * op); g.stroke();
-    g.fillStyle = '#0aa858'; const a = t * 2.2; g.beginPath(); g.arc(Math.cos(a) * R * 1.12, Math.sin(a) * R * 0.34, 5 * op, 0, TAU); g.fill();
+    const a = t * 2.2; g.fillStyle = '#c6e84a'; g.beginPath(); g.arc(Math.cos(a) * R * 1.12, Math.sin(a) * R * 0.34, 5 * op, 0, TAU); g.fill();
     g.restore();
   }
-  const ly = iy + ih + 44;
-  const lp = E.outExpo(prog(t, 18.0, 18.8));
-  const lg2 = g.createLinearGradient(W / 2 - 340, 0, W / 2 + 340, 0);
-  lg2.addColorStop(0, '#191b25'); lg2.addColorStop(1, '#05a858');
-  g.fillStyle = lg2; g.fillRect(W / 2 - 340 * lp, ly, 680 * lp, 2);
-  const tp = E.outCubic(prog(t, 18.25, 18.9));
-  if (tp > 0) {
-    g.textAlign = 'center'; g.textBaseline = 'alphabetic';
-    setFont(g, 'Space Grotesk', 500, 30); g.letterSpacing = '16px';
-    g.fillStyle = `rgba(25,27,37,${tp})`;
-    g.fillText('MOTION DESIGN SHOWREEL', W / 2 + 8, ly + 66 + (1 - tp) * 20);
-    setFont(g, 'JetBrains Mono', 400, 17); g.letterSpacing = '10px';
-    g.fillStyle = `rgba(10,168,90,${E.outCubic(prog(t, 18.5, 19.1))})`;
-    g.fillText(scramble('2026 · PORTOKO', prog(t, 18.5, 19.2), t, 10), W / 2 + 5, ly + 112);
+  // headline, as on the site: "A Digital *Atelier* with a consulting desk."
+  const hp = E.outCubic(prog(t, 18.15, 18.75));
+  if (hp > 0) {
+    const y = 585 + (1 - hp) * 18, parts = [['A Digital ', 500, false], ['Atelier', 600, true], [' with a consulting desk.', 500, false]];
+    const font = ([, w, it]) => `${it ? 'italic ' : ''}${w} 36px "IBM Plex Mono"`;
+    let total = 0; for (const pt of parts) { g.font = font(pt); total += g.measureText(pt[0]).width; }
+    let x = W / 2 - total / 2; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.globalAlpha = hp;
+    for (const pt of parts) {
+      g.font = font(pt); const w = g.measureText(pt[0]).width;
+      if (pt[2]) { const gr = g.createLinearGradient(x, 0, x + w, 0); gr.addColorStop(0, '#e6fbff'); gr.addColorStop(0.3, '#5ee0e8'); gr.addColorStop(0.65, '#01da7d'); gr.addColorStop(1, '#c6e84a'); g.fillStyle = gr; }
+      else g.fillStyle = '#f1f0ec';
+      g.fillText(pt[0], x, y); x += w;
+    }
+    g.globalAlpha = 1;
+  }
+  // CTA button, clicked on the last beat
+  const bp = prog(t, 18.55, 18.9);
+  if (bp > 0) {
+    const press = t >= 19.05 ? 1 - 0.06 * Math.exp(-(t - 19.05) / 0.06) * Math.sin(Math.min(1, (t - 19.05) / 0.12) * Math.PI) : 1;
+    const sc = E.outBack(bp, 2.2) * press, label = "Tell us what's tangled  →";
+    setFont(g, 'IBM Plex Mono', 600, 26); g.letterSpacing = '0px';
+    const bw = g.measureText(label).width + 84, bh = 72, cx = W / 2, cy = 715;
+    g.save(); g.translate(cx, cy); g.scale(sc, sc);
+    const glow = imp(t, 19.05, 0.35);
+    if (glow > 0.01) { g.strokeStyle = rgba(COL.lime, glow); g.lineWidth = 2; const k = 1 + (1 - glow) * 0.25; g.beginPath(); g.roundRect(-bw / 2 * k - 8, -bh / 2 * k - 8, bw * k + 16, bh * k + 16, 44); g.stroke(); }
+    g.fillStyle = '#01da7d'; g.beginPath(); g.roundRect(-bw / 2, -bh / 2, bw, bh, bh / 2); g.fill();
+    g.fillStyle = '#06141a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(label, 0, 2);
+    g.restore();
+  }
+  const fp = E.outCubic(prog(t, 18.8, 19.3));
+  if (fp > 0) {
+    setFont(g, 'IBM Plex Mono', 400, 18); g.letterSpacing = '4px'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = `rgba(155,154,151,${fp})`;
+    g.fillText('PORTOKO.COM  ·  ODOO COMMUNITY  ·  BANDUNG, GMT+7', W / 2 + 2, 835);
     g.letterSpacing = '0px';
   }
   // flash from the iris
   const fl = 1 - E.outCubic(prog(t, 17.5, 17.9));
   if (fl > 0) { g.fillStyle = `rgba(255,255,255,${fl})`; g.fillRect(0, 0, W, H); }
-  // final fade
-  const ff = prog(t, 19.72, 20);
-  if (ff > 0) { g.fillStyle = `rgba(255,255,255,${ff * 0.0})`; g.fillRect(0, 0, W, H); }
 }
 
 // ---------------------------------------------------------------- HUD
-const SECTIONS = [[0, '01', 'IGNITION'], [2, '02', 'BIG BANG'], [5, '03', 'KINETIC TYPE'], [7.95, '04', 'ORBIT'], [11.4, '05', 'FLOW'], [13.95, '06', 'IDENTITY']];
+const SECTIONS = [[0, '01', "WHAT'S TANGLED"], [2, '02', 'UNTANGLE'], [5, '03', 'WHAT WE DO'], [7.95, '04', 'HONEST ADVICE'], [11.4, '05', 'FIX THE FLOW'], [13.95, '06', 'PORTOKO']];
 function HUD(g, t, inv) {
   const a = prog(t, 0.1, 0.5) * (1 - prog(t, 17.1, 17.4));
   if (a <= 0) return;
@@ -992,10 +1032,10 @@ function HUD(g, t, inv) {
     g.beginPath(); g.moveTo(x, y + sy * L * dr); g.lineTo(x, y); g.lineTo(x + sx * L * dr, y); g.stroke();
   }
   g.textBaseline = 'middle';
-  setFont(g, 'JetBrains Mono', 700, 14); g.letterSpacing = '5px'; g.textAlign = 'left';
+  setFont(g, 'IBM Plex Mono', 600, 14); g.letterSpacing = '5px'; g.textAlign = 'left';
   g.fillStyle = rgba(c, 0.8 * a); g.fillText(scramble('PORTOKO', prog(t, 0.15, 0.7), t, 20), m + 20, m + 20);
-  setFont(g, 'JetBrains Mono', 400, 14); g.fillStyle = rgba(c, 0.5 * a);
-  g.fillText('/ REEL 2026', m + 138, m + 20);
+  setFont(g, 'IBM Plex Mono', 400, 14); g.fillStyle = rgba(c, 0.5 * a);
+  g.fillText('/ BANDUNG · GMT+7', m + 138, m + 20);
   // section
   let sec = SECTIONS[0]; for (const s of SECTIONS) if (t >= s[0]) sec = s;
   g.textAlign = 'right';
@@ -1007,8 +1047,8 @@ function HUD(g, t, inv) {
   g.fillText(`TC 00:00:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`, m + 20, H - m - 20);
   // progress
   g.textAlign = 'right';
-  g.fillText('1920×1080 · 60P', W - m - 20, H - m - 20);
-  const pw = 180, px = W - m - 20 - pw - 230;
+  g.fillText('PORTOKO.COM', W - m - 20, H - m - 20);
+  const pw = 180, px = W - m - 20 - pw - 180;
   g.fillStyle = rgba(c, 0.18 * a); g.fillRect(px, H - m - 21, pw, 2);
   g.fillStyle = rgba(inv ? c : COL.lime, 0.9 * a); g.fillRect(px, H - m - 21, pw * (t / DUR), 2);
   g.letterSpacing = '0px';
@@ -1067,7 +1107,7 @@ function render(t) {
   t = clamp(t, 0, DUR - 1e-6);
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
   ctx.fillStyle = '#020405'; ctx.fillRect(0, 0, W, H);
-  if (t >= 17.5) { S7(ctx, t); grain(t, 0.05); return; }
+  if (t >= 17.5) { S7(ctx, t); vignette(0.45); grain(t, 0.08); return; }
 
   let shake = 0, ca = 0.0;
   for (const [t0, k] of IMPACTS) { shake += k * imp(t, t0, 0.14); ca += k * imp(t, t0, 0.22); }
@@ -1079,17 +1119,18 @@ function render(t) {
   if (t >= 2.0 && t < 5.0) S2(ctx, t);
   // S3 with the O-portal into S4
   const portalP = E.inExpo(prog(t, 7.74, 8.02));
-  const Rp = 70 + portalP * 1800, ringW = Rp * 0.2;
+  const PORTAL = portalAt(t), Rp = PORTAL.r + portalP * 1800, ringW = Rp * 0.24;
   const inner = Rp - ringW / 2;
   if (t >= 5.0 && t < 8.02 && inner < 1110) {
     S3(ctx, t);
     if (t >= 7.72) {
-      const cx = W / 2, cy = H / 2, pin = E.outBack(prog(t, 7.72, 7.8), 2.5);
+      const pin = E.outBack(prog(t, 7.72, 7.8), 2.5), mv = E.inOutCubic(prog(t, 7.74, 8.0));
+      const cx = lerp(PORTAL.x, W / 2, mv), cy = lerp(PORTAL.y, H / 2, mv);
       const r0 = Math.max(0.1, (inner) * pin);
       ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r0, 0, TAU); ctx.clip();
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); S4(ctx, t); ctx.restore();
       const rg = ctx.createLinearGradient(cx - Rp, cy - Rp, cx + Rp, cy + Rp);
-      rg.addColorStop(0, '#f2f8ff'); rg.addColorStop(0.5, '#7dffc4'); rg.addColorStop(1, '#0fcf74');
+      rg.addColorStop(0, '#e6fbff'); rg.addColorStop(0.35, '#5ee0e8'); rg.addColorStop(0.7, '#01da7d'); rg.addColorStop(1, '#c6e84a');
       ctx.strokeStyle = rg; ctx.lineWidth = ringW * pin;
       ctx.beginPath(); ctx.arc(cx, cy, Rp * pin, 0, TAU); ctx.stroke();
     }
@@ -1121,9 +1162,8 @@ const READY = (async () => {
   await Promise.all([
     document.fonts.load('800 100px "Unbounded"'), document.fonts.load('300 100px "Unbounded"'),
     document.fonts.load('300 100px "Space Grotesk"'), document.fonts.load('500 100px "Space Grotesk"'), document.fonts.load('700 100px "Space Grotesk"'),
-    document.fonts.load('400 20px "JetBrains Mono"'), document.fonts.load('700 20px "JetBrains Mono"'),
+    document.fonts.load('400 20px "IBM Plex Mono"'), document.fonts.load('500 20px "IBM Plex Mono"'), document.fonts.load('600 20px "IBM Plex Mono"'), document.fonts.load('italic 600 20px "IBM Plex Mono"'),
   ]);
-  LOGO_IMG = new Image(); LOGO_IMG.src = 'logo.png'; await LOGO_IMG.decode();
   NEBULA = buildNebula(); buildGrain(); buildStars(); buildBurst(); buildDots(); buildBlackHole(); buildFlow();
   window.__ready = true;
 })();
