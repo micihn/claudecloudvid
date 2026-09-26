@@ -161,4 +161,7 @@ def wash_wipe(a, b, t, paper, seed=7, direction=(1, 0.3)):
     m = np.clip((th - field) * 18, 0, 1)
     edge = np.exp(-((th - field) * 30) ** 2) * (t > 0) * (t < 1)
     out = a * (1 - m[..., None]) + b * m[..., None]
-    return np.clip(out * (1 - 0.35 * edge[..., None] * (1 - out * 0.6)), 0, 1)
+    # the pigment line only forms where there is paint to carry, not over bare paper
+    diff = np.clip(np.abs(a - b).max(-1) * 4, 0, 1)
+    diff = cv2.GaussianBlur(diff, (0, 0), 6)
+    return np.clip(out * (1 - 0.3 * (edge * diff)[..., None] * (1 - out * 0.6)), 0, 1)

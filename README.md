@@ -1,4 +1,9 @@
-# PORTOKO — brand film
+# PORTOKO — brand film and teaser
+
+| File | What |
+|---|---|
+| `PORTOKO_showreel.mp4` | 20 s brand film, 1080p60, bold motion graphics |
+| `PORTOKO_teaser.mp4` | 30 s teaser, 1080p24: calm, painted real footage (see below) |
 
 `PORTOKO_showreel.mp4` — 20 s, 1920×1080, 60 fps. The orchestral score is made only from real CC0 recordings.
 
@@ -23,3 +28,26 @@ eval "$(audio/fetch_samples.sh | tail -1)"               # sparse-clone the CC0 
 ffmpeg -framerate 60 -i frames/%05d.jpg -i score.wav -c:v libx264 -crf 17 -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_showreel.mp4
 ```
 Preview live by serving `showreel/` over HTTP and opening `index.html` (`?t=9.5` freezes a frame). Sound sources are listed in `showreel/audio/CREDITS.md`.
+
+## Teaser (`teaser/`)
+Six still shots of real CC0 footage from Wikimedia Commons, painted as watercolour or acrylic on one sketchbook sheet, with ink captions. The shots change with a wet-wash wipe on each bar of a 60 BPM score.
+
+| Time | Shot | Paint | Caption |
+|---|---|---|---|
+| 0–4 s | Fog on a lake | watercolour, blooms onto the empty sheet | — |
+| 4–8 s | Threads on a loom | watercolour | Every business gets a little tangled. |
+| 8–12 s | Glasses on a laptop | acrylic | Five spreadsheets, two WhatsApp groups, and an Odoo nobody trusts. |
+| 12–16 s | Hands at a potter's wheel | acrylic | So we sit down, and look at how it really works. |
+| 16–20 s | A candle | acrylic | Then we untangle it. Gently. |
+| 20–24 s | Sunset | watercolour | Configure · Build · Connect · Redesign |
+| 24–30 s | Wordmark painted in brand colours | watercolour | A digital *atelier* with a consulting desk. / Tell us what's tangled. |
+
+Rebuild:
+```
+cd teaser
+python3 tools/commons_get.py footage "Morning Fog on Lake BRoll 10s.webm" ...   # file titles in CREDITS.md
+node tools/logo_mask.mjs assets/logo_mask.png                                     # (already committed)
+python3 render_teaser.py                                                          # frames/*.jpg (numpy, opencv, pillow)
+(cd ../showreel/audio && python3 teaser_score.py ../../teaser/score.wav)
+ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -crf 16 -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_teaser.mp4
+```
