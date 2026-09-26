@@ -5,3 +5,5 @@ showreel/score.wav
 showreel/audio/.samples/
 showreel/audio/__pycache__/
 PORTOKO_showreel_preview.mp4
+previews/
+__pycache__/
