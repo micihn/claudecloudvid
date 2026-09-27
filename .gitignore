@@ -7,8 +7,7 @@ showreel/audio/__pycache__/
 PORTOKO_showreel_preview.mp4
 previews/
 __pycache__/
-intro/images/
-intro/frames/
-intro/stills/
-intro/sheet_*.jpg
-intro/score.wav
+pov/node_modules/
+pov/frames/
+pov/stills/
+pov/music/

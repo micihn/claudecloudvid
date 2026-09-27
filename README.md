@@ -5,7 +5,7 @@
 | `PORTOKO_showreel.mp4` | 20 s brand film, 1080p60, bold motion graphics |
 | `PORTOKO_teaser.mp4` | 30 s teaser, 1080p24: calm, painted real footage (see below) |
 | `PORTOKO_film.mp4` | 20 s cinematic film, 1080p24: a match-cut montage of 39 real photographs on one circle, three words, then the O becomes the logo |
-| `PORTOKO_intro.mp4` | 35 s intro teaser, 1080p24: through a lens, out onto one horizon of 24 surfaces, three phrases, then the wordmark |
+| `PORTOKO_pov.mp4` | 30 s film, 1080p30, cut to *Point of View* (petalcore): a 3D tangle that, from one exact angle, is a flower |
 
 `PORTOKO_showreel.mp4` — 20 s, 1920×1080, 60 fps. The orchestral score is made only from real CC0 recordings.
 
@@ -69,22 +69,29 @@ python3 score.py score.wav               # needs the CC0 samples, see showreel/a
 ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -b:v 10M -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest ../PORTOKO_film.mp4
 ```
 
-## Intro (`intro/`)
-A 35 s teaser in two movements, joined by one camera move. First we look through a lens at eight archive images, from tangled to ordered. Then the camera pushes through the lens, and its rim opens out into a horizon. On that horizon, 24 real surfaces are wrapped onto the same planet-sized dome, and the cuts speed up. All 32 images are public domain or CC0 (`intro/CREDITS.md`).
 
-| Time | Picture | Words | Sound |
+## Point of View (`pov/`)
+Portoko untangles how a business works. The film shows that with one idea: a tangle that is really a flower, if you look from the right place.
+
+Every thread of a line-drawn flower is pushed a random distance along the line of sight from one camera position (the *point of view*), plus some sideways noise. From anywhere else it's a 3D knot. As the camera orbits in, the sideways noise fades away. When the camera reaches that exact spot, the knot snaps into the drawing. Then the drawing flattens, is painted in watercolour, and blooms.
+
+Everything is cut to the first 30 s of the music. `pov/src/timeline.js` holds the times measured from the track.
+
+| Time | Music | Picture | Words |
 |---|---|---|---|
-| 0–11 s | Lens: marbled paper, knotted cable, a ledger, a loom, a pocket watch, a wind rose, radiolaria, a neat rope coil. Each image dissolves into the next and pushes in slowly | — | Wine-glass drone, one soft piano note per image, harp answers |
-| 11–13 s | The aperture grows and sinks until its rim is the horizon; the rope becomes a moon | — | Bowed cymbal, timpani and string swell |
-| 13–27 s | Horizon match-cuts, 1.1 s down to 0.25 s: moon, maps, lace, leaf, marbling, lichen, ledgers, kilims, tree rings, star charts, dunes | *Untangle* · *how things* · *really work.* | Wide F chord, then one note of the hook per cut over building strings; hard stop |
-| 27–35 s | Dark card, an atmosphere glow along the limb in the site colours | *A digital atelier*, then the wordmark and portoko.com | Glass note; C add9 chord, tubular bell, the switch click; strings as the limb rises |
+| 0–6.97 s | Swell, hard stop | One glowing thread draws itself, then hundreds. Line-drawn fragments of a tangled business (spreadsheets, chat bubbles, a barcode, a receipt, a kanban board) are pulled into a growing knot | — |
+| 6.97–8.05 s | Silence, five clicks | Black | *Look.*, one character per click |
+| 8.05–12.9 s | Sparse hits, glitch tones | Each hit jump-cuts to a new angle on the knot, glitching. A viewfinder reads the camera angle | — |
+| 12.9–22.9 s | Sub drone, build | One continuous orbit. The knot untangles and gains colour as the readout counts down to θ 0.0° φ 0.0° | — |
+| 22.9–26.7 s | Swell peak, climax | Lock: the knot is a flower. It flattens, the watercolour floods in, and the petals cup and open, lit from the heart | *Untangled.* |
+| 26.7–29.1 s | Stop, glitch burst, thump | The petals let go; a glitch burst tears open onto the wordmark | PORTOKO, then *A digital atelier* on the thump |
+| 29.1–30 s | Silence | Everything holds | |
 
-Rebuild:
+Rendered with three.js (lines, painted-petal shaders, bloom, and a final glitch/lens/grain pass) in headless Chromium.
+
+Rebuild (the music is not in the repository; put the track at `pov/music/point.of.view.mp3`):
 ```
-cd intro
-python3 tools/commons.py fetch $(python3 -c "import json;d=json.load(open('shots.json'));print(' '.join(x['id'] for a in d.values() for x in a))")
-python3 render_intro.py                  # frames/*.jpg  (python3 render_intro.py 12.5 20 = stills)
-python3 score.py score.wav               # needs the CC0 samples, see showreel/audio/fetch_samples.sh
-ffmpeg -framerate 24 -i frames/%05d.jpg -i score.wav -c:v libx264 -b:v 10M -maxrate 14M -bufsize 20M -tune grain -preset slow -pix_fmt yuv420p -c:a aac -b:a 256k -shortest -movflags +faststart ../PORTOKO_intro.mp4
+cd pov && npm install
+node render.mjs frames 4                 # frames/00000.jpg ... 00899.jpg   (node render.mjs stills 22.9 = one frame)
+ffmpeg -framerate 30 -i frames/%05d.jpg -t 30 -i music/point.of.view.mp3 -af "afade=t=out:st=29.9:d=0.1" -c:v libx264 -b:v 12M -maxrate 16M -bufsize 24M -preset slow -tune grain -pix_fmt yuv420p -c:a aac -b:a 256k -shortest -movflags +faststart ../PORTOKO_pov.mp4
 ```
-To pick different images: `tools/commons.py search "..."`, then `tools/previews.py` and `tools/sheets.py` for contact sheets, then edit `shots.json` (per-shot `zoom`, `dx`, `dy`, and an optional flat `bg` colour behind the dome), and run `tools/credits.py`.
